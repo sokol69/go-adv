@@ -3,12 +3,14 @@ package main
 import (
 	"adv-demo/configs"
 	"adv-demo/internal/auth"
+	"adv-demo/pkg/db"
 	"fmt"
 	"net/http"
 )
 
 func main() {
 	conf := configs.LoadConfig()
+	_ = db.NewDb(conf)
 	router := http.NewServeMux()
 	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
 		Config: conf,
