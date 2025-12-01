@@ -1,21 +1,22 @@
 package link
 
 import (
-	"adv-demo/configs"
 	"fmt"
 	"net/http"
 )
 
 type LinkHandlerDeps struct {
-	*configs.Config
+	LinkRepository *LinkRepository
 }
 
 type LinkHandler struct {
-	*configs.Config
+	LinkRepository *LinkRepository
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
-	handler := &LinkHandler{}
+	handler := &LinkHandler{
+		LinkRepository: deps.LinkRepository,
+	}
 	router.HandleFunc("POST /link", handler.Create())
 	router.HandleFunc("PATCH /link/{id}", handler.Update())
 	router.HandleFunc("DELETE /link/{id}", handler.Delete())
