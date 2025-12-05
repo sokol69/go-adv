@@ -5,6 +5,7 @@ import (
 	"adv-demo/internal/auth"
 	"adv-demo/internal/link"
 	"adv-demo/pkg/db"
+	"adv-demo/pkg/middleware"
 	"fmt"
 	"net/http"
 )
@@ -27,7 +28,7 @@ func main() {
 
 	server := http.Server{
 		Addr: ":8081",
-		Handler: router,
+		Handler: middleware.Logging(router),
 	}
 
 	fmt.Println("Server on port 8081")
