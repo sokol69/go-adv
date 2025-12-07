@@ -4,6 +4,7 @@ import (
 	"adv-demo/configs"
 	"adv-demo/internal/auth"
 	"adv-demo/internal/link"
+	"adv-demo/internal/user"
 	"adv-demo/pkg/db"
 	"adv-demo/pkg/middleware"
 	"fmt"
@@ -15,19 +16,27 @@ func main() {
 	database := db.NewDb(conf)
 	router := http.NewServeMux()
 
-	//Repositories
+	// Repositories
 	linkRepository := link.NewLinkRepository(database)
+	userRepository := user.NewUserRepository(database)
+
+	// Services
+	authService := auth.NewAuthService(userRepository)
 
 	// Handlers
 	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
 		Config: conf,
+		AuthService: authService,
 	})
 	link.NewLinkHandler(router, link.LinkHandlerDeps{
 		LinkRepository: linkRepository,
 	})
 
-	//Middlewares
-	stack := middleware.Chain(middleware.CORS, middleware.Logging)
+	// Middlewares
+	stack := middleware.Chain(
+		middleware.CORS,
+		middleware.Logging,
+	)
 
 	server := http.Server{
 		Addr: ":8081",
